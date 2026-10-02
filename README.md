@@ -40,6 +40,7 @@ data/                               train.csv, test.csv, test_labels.csv (git-ig
 models/                             joblib pipeline (git-ignored, regenerate from the notebook)
 web/index.html                      project page + live demo
 web/toxic_model_web.json            model export the demo loads (written by notebook section 13b)
+web/vercel.json                     static-deploy config; deploy web/ as the project root
 ```
 
 ## Run it locally (VS Code)
@@ -67,6 +68,18 @@ To try the demo page locally, serve the `web/` folder (opening the file directly
 python -m http.server 8000 --directory web
 ```
 then open http://localhost:8000.
+
+## Deploy the demo
+`web/` is a static site - the page plus the model JSON, no build step. Deploy that folder as the project root:
+
+```bash
+vercel login
+vercel --cwd web            # preview
+vercel --cwd web --prod     # production
+```
+Or import the repo at vercel.com and set **Root Directory** to `web`. Either way `web/vercel.json` applies, which
+caches `toxic_model_web.json` for an hour with background revalidation - long enough that returning visitors
+skip the 6 MB download, short enough that a retrained model reaches them.
 
 ## Use the model in Python
 ```python

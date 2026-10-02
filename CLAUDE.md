@@ -15,6 +15,7 @@ Portfolio project for Madhavan T (data engineering / analytics job search). v2 r
 - Data: `python scripts/download_data.py`
 - Train + evaluate + export: run all cells of the notebook (writes `models/toxic_tfidf_logreg.joblib` and `web/toxic_model_web.json`)
 - Preview site: `python -m http.server 8000 --directory web`
+- Deploy: `vercel --cwd web` (deploy `web/` as the project root, not the repo root; `web/vercel.json` holds the config)
 
 ## Model
 - Word TF-IDF (1–2 grams, `token_pattern=(?u)\b\w+\b`) + char_wb TF-IDF (2–5), both `sublinear_tf=True`, `strip_accents="unicode"`, l2 norm, 100K features each.
@@ -35,7 +36,7 @@ but 5.8x that for non-toxic comments containing `gay`. Browser-export parity 6.8
 
 ## Open tasks
 1. Replace the GitHub placeholder link in `web/index.html` (search `TODO`) once the repo exists; point the "Notebook" link at the v2 notebook.
-2. `git init` is done with one local commit; still to do is pushing to GitHub and deploying `web/` on Vercel (index.html + toxic_model_web.json). Ask before pushing or deploying.
+2. Pushed to https://github.com/Madhavan12/toxic-comment-classifier (public). Vercel deploy is still pending: it needs an interactive `vercel login` first.
 3. Update the LinkedIn project description with the real numbers (draft lives in the chat, not committed).
 4. Colab needs `toxic_clean.py` beside the notebook, so the Colab path wants a `!git clone` line in section 1 once the repo URL exists.
 5. Optional: run section 14 (DistilBERT) on a GPU and add the comparison.
