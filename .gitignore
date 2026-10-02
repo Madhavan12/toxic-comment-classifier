@@ -1,0 +1,20 @@
+# data and secrets
+data/*
+!data/.gitkeep
+kaggle.json
+
+# trained artefacts (large; regenerate with the notebook)
+models/*
+!models/.gitkeep
+
+# python / jupyter
+__pycache__/
+.ipynb_checkpoints/
+.venv/
+venv/
+.env
+
+# os / editor
+.DS_Store
+Thumbs.db
+.vscode/

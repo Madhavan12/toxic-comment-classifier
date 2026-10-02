@@ -1,0 +1,8 @@
+# Normalise line endings in the repo; check out native on Windows.
+* text=auto
+
+# The model export is one 6 MB line of JSON; keep git out of it.
+web/toxic_model_web.json -text
+
+# Notebooks stay text so GitHub can diff them.
+*.ipynb text eol=lf
