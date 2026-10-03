@@ -15,7 +15,7 @@ Portfolio project for Madhavan T (data engineering / analytics job search). v2 r
 - Data: `python scripts/download_data.py`
 - Train + evaluate + export: run all cells of the notebook (writes `models/toxic_tfidf_logreg.joblib` and `web/toxic_model_web.json`)
 - Preview site: `python -m http.server 8000 --directory web`
-- Deploy: `vercel --cwd web --prod` (deploy `web/` as the project root, not the repo root — `web/vercel.json` holds the config)
+- Deploy: `vercel --cwd web --prod` (deploy `web/` as the project root, not the repo root. `web/vercel.json` holds the config)
 
 ## Model
 - Word TF-IDF (1–2 grams, `token_pattern=(?u)\b\w+\b`) + char_wb TF-IDF (2–5), both `sublinear_tf=True`, `strip_accents="unicode"`, l2 norm, 100K features each.
@@ -24,7 +24,7 @@ Portfolio project for Madhavan T (data engineering / analytics job search). v2 r
 - Final numbers come from the official Kaggle test set (`test.csv` + `test_labels.csv`, rows with -1 dropped).
 
 ## Rules that matter
-- **Cleaning lives in `toxic_clean.py` only.** `clean_text` is defined there, imported by the notebook, and pickled into the saved pipeline as the `TextCleaner` step — so the artifact cleans its own input and `predict_proba` takes raw text. Never redefine it in the notebook.
+- **Cleaning lives in `toxic_clean.py` only.** `clean_text` is defined there, imported by the notebook, and pickled into the saved pipeline as the `TextCleaner` step, so the artifact cleans its own input and `predict_proba` takes raw text. Never redefine it in the notebook.
 - **The JS in `web/index.html` re-implements `clean_text` and sklearn's TfidfVectorizer.** If you change cleaning, tokenisation, n-gram ranges or vectorizer options, update both `toxic_clean.py` and the JS (`cleanText`, `stripAccents`, `wordGrams`, `charWbGrams`, `tfidf`) to match, then re-check parity: `window.__toxicScore(text)` in the browser console should match `pipeline.predict_proba([text])` to ~1e-4 (the gap comes from 16-bit weight quantisation). Last measured: 6.8e-05.
 - Report results on the real class distribution only. Never on balanced resamples (that was the v1 mistake).
 - Keep the HTML self-contained: inline CSS/JS, Google Fonts only.

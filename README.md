@@ -52,7 +52,7 @@ python scripts/download_data.py   # needs kaggle.json and accepted competition r
 ```
 Open `Toxic_Comment_Classifier_v2.ipynb`, choose the `.venv` kernel, then **Run All**. The last full run took
 **13.5 minutes** on a laptop CPU, most of it in section 6 (TF-IDF, 319s) and section 7 (fitting four candidate
-models, 375s for the winner alone — `liblinear` is single-threaded and the notebook sets no `n_jobs`).
+models, 375s for the winner alone, because `liblinear` is single-threaded and the notebook sets no `n_jobs`).
 
 `requirements.txt` holds minimum versions. `requirements-lock.txt` is a `pip freeze` of the environment that
 produced the numbers above (Python 3.12.3, numpy 2.5.3, pandas 3.0.6, scikit-learn 1.9.1). Install from the
