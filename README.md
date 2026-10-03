@@ -5,16 +5,16 @@ Flags harmful comments across six non-exclusive categories (`toxic`, `severe_tox
 ## Approach
 - **Features:** word (1–2 gram) + character (2–5 gram) TF-IDF, which handles misspellings and obfuscation like `f*ck`
 - **Model:** one-vs-rest Logistic Regression, compared against Multinomial NB, word-only LogReg and LinearSVC.
-  LinearSVC edges it on validation ROC-AUC (0.9860 vs 0.9854), inside run-to-run noise; LogReg is kept because
+  LinearSVC edges it on validation ROC-AUC (0.9860 vs 0.9854), inside run-to-run noise. LogReg is kept because
   the thresholds, the browser demo and any moderation queue all need `predict_proba`
-- **Imbalance:** trained on the full imbalanced data; multilabel iterative stratification for validation; per-label thresholds tuned on validation
+- **Imbalance:** trained on the full imbalanced data, with multilabel iterative stratification for validation and a separate threshold tuned per label
 - **Evaluation:** official Kaggle test set with its real class distribution, using mean column-wise ROC-AUC (the competition metric), PR-AUC and F1
 - **Responsible AI:** top-n-gram explainability, error analysis, and an identity-term false-positive audit
 - **Packaging:** a single sklearn `Pipeline` + thresholds saved with `joblib`, plus a browser export used by the live demo
 - **Optional:** DistilBERT fine-tune for comparison (GPU)
 
 ## Results (official test set)
-Mean column-wise ROC-AUC (the competition metric) is **0.9794** on the 63,978 scored test rows. Micro-F1 is 0.637 and macro-F1 0.561. Precision, recall and F1 use the per-label thresholds tuned for F1 on the validation split, so they trade precision for recall on the rare labels; ROC-AUC and PR-AUC are threshold-free. All of it is on the real class distribution, never a balanced resample.
+Mean column-wise ROC-AUC (the competition metric) is **0.9794** on the 63,978 scored test rows. Micro-F1 is 0.637 and macro-F1 0.561. Precision, recall and F1 use the per-label thresholds tuned for F1 on the validation split, so they trade precision for recall on the rare labels. ROC-AUC and PR-AUC are threshold-free. All of it is on the real class distribution, never a balanced resample.
 
 Section 9b scores the identical predictions both ways to show why that matters: mean F1 is **0.820** on
 balanced per-label samples against **0.561** on the real distribution. `severe_toxic` goes from 0.887 to
@@ -40,7 +40,7 @@ data/                               train.csv, test.csv, test_labels.csv (git-ig
 models/                             joblib pipeline (git-ignored, regenerate from the notebook)
 web/index.html                      project page + live demo
 web/toxic_model_web.json            model export the demo loads (written by notebook section 13b)
-web/vercel.json                     static-deploy config; deploy web/ as the project root
+web/vercel.json                     static-deploy config for serving web/ as the project root
 ```
 
 ## Run it locally (VS Code)
@@ -54,7 +54,7 @@ Open `Toxic_Comment_Classifier_v2.ipynb`, choose the `.venv` kernel, then **Run 
 **13.5 minutes** on a laptop CPU, most of it in section 6 (TF-IDF, 319s) and section 7 (fitting four candidate
 models, 375s for the winner alone — `liblinear` is single-threaded and the notebook sets no `n_jobs`).
 
-`requirements.txt` holds minimum versions; `requirements-lock.txt` is a `pip freeze` of the environment that
+`requirements.txt` holds minimum versions. `requirements-lock.txt` is a `pip freeze` of the environment that
 produced the numbers above (Python 3.12.3, numpy 2.5.3, pandas 3.0.6, scikit-learn 1.9.1). Install from the
 lock file to reproduce the table exactly.
 

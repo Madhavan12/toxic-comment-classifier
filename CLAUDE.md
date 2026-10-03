@@ -15,7 +15,7 @@ Portfolio project for Madhavan T (data engineering / analytics job search). v2 r
 - Data: `python scripts/download_data.py`
 - Train + evaluate + export: run all cells of the notebook (writes `models/toxic_tfidf_logreg.joblib` and `web/toxic_model_web.json`)
 - Preview site: `python -m http.server 8000 --directory web`
-- Deploy: `vercel --cwd web` (deploy `web/` as the project root, not the repo root; `web/vercel.json` holds the config)
+- Deploy: `vercel --cwd web --prod` (deploy `web/` as the project root, not the repo root — `web/vercel.json` holds the config)
 
 ## Model
 - Word TF-IDF (1–2 grams, `token_pattern=(?u)\b\w+\b`) + char_wb TF-IDF (2–5), both `sublinear_tf=True`, `strip_accents="unicode"`, l2 norm, 100K features each.
@@ -29,15 +29,17 @@ Portfolio project for Madhavan T (data engineering / analytics job search). v2 r
 - Report results on the real class distribution only. Never on balanced resamples (that was the v1 mistake).
 - Keep the HTML self-contained: inline CSS/JS, Google Fonts only.
 
+## Live
+- Demo: https://toxic-comment-classifier-nu.vercel.app
+- Repo: https://github.com/Madhavan12/toxic-comment-classifier
+
 ## Results (2026-10-03 run, official Kaggle test set, 63,978 scored rows)
 Mean column-wise ROC-AUC **0.9794**, mean PR-AUC 0.618, micro-F1 0.637, macro-F1 0.561. Per-label numbers are
 in the README and in the `web/index.html` Results table. Fairness audit: 8.09% baseline false-positive rate,
 but 5.8x that for non-toxic comments containing `gay`. Browser-export parity 6.8e-05.
 
 ## Open tasks
-1. Replace the GitHub placeholder link in `web/index.html` (search `TODO`) once the repo exists; point the "Notebook" link at the v2 notebook.
-2. Pushed to https://github.com/Madhavan12/toxic-comment-classifier (public). Vercel deploy is still pending: it needs an interactive `vercel login` first.
-3. Update the LinkedIn project description with the real numbers (draft lives in the chat, not committed).
-4. Colab needs `toxic_clean.py` beside the notebook, so the Colab path wants a `!git clone` line in section 1 once the repo URL exists.
-5. Optional: run section 14 (DistilBERT) on a GPU and add the comparison.
-6. Consider reducing identity-term false positives (augmentation, per-group thresholds, or the Jigsaw Unintended Bias dataset).
+1. Colab needs `toxic_clean.py` beside the notebook, so section 1 wants a `!git clone https://github.com/Madhavan12/toxic-comment-classifier` line for that path to work.
+2. Vercel auto-deploy is not wired up. Vercel's GitHub app is not installed on the repo, so pushes do not redeploy. Deploy by hand with `vercel --cwd web --prod`.
+3. Optional: run section 14 (DistilBERT) on a GPU and add the comparison.
+4. Consider reducing identity-term false positives, through augmentation with neutral identity mentions, per-group threshold review, or the Jigsaw Unintended Bias dataset.
